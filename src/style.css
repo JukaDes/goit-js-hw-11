@@ -8,17 +8,16 @@ body {
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
-
 }
 
 .search-box {
-    border-color: rgb(129, 158, 253);
-    border-radius: 15px;
+  border-color: rgb(129, 158, 253);
+  border-radius: 15px;
 }
 
 .search-box:hover,
 .search-box:focus {
-    border-color: rgb(38, 89, 255);
+  border-color: rgb(38, 89, 255);
 }
 
 .load-more {
@@ -40,8 +39,8 @@ body {
 .search:focus,
 .load-more:hover,
 .load-more:focus {
-border-color: rgb(38, 89, 255);
-cursor: pointer;
+  border-color: rgb(38, 89, 255);
+  cursor: pointer;
 }
 
 .invisible {
