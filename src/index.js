@@ -1,92 +1,144 @@
-import './sass/main.scss';
-import { fetchImages } from './js/fetch-images';
-import { renderGallery } from './js/render-gallery';
-import { onScroll, onToTopBtn } from './js/scroll';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
-
 import 'simplelightbox/dist/simple-lightbox.min.css';
+const axios = require('axios').default;
 
-const searchForm = document.querySelector('#search-form');
-const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('.btn-load-more');
-let query = '';
-let page = 1;
-let simpleLightBox;
-const perPage = 40;
+const refs = {
+  form: document.querySelector('.search-form'),
+  input: document.querySelector('input'),
+  searchBtn: document.querySelector('.search'),
+  loadMoreBtn: document.querySelector('.load-more'),
+  gallery: document.querySelector('.gallery'),
+};
 
-searchForm.addEventListener('submit', onSearchForm);
-loadMoreBtn.addEventListener('click', onLoadMoreBtn);
+const BASE_URL = 'https://pixabay.com/api/';
+const API = '30958451-37447cd2214fbc52c133bb851';
 
-onScroll();
-onToTopBtn();
+let keyword = '';
+let pageToFetch = 1;
 
-function onSearchForm(e) {
+async function fetchEvent(page, keyword) {
+  const response = await axios.get(`${BASE_URL}`, {
+    params: {
+      key: API,
+      q: keyword,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+      per_page: 40,
+      page,
+    },
+  });
+  if (!response) {
+    throw new Error(response.error);
+  }
+  return await response.data;
+}
+
+async function getEvents(page, keyword) {
+  try {
+    const data = await fetchEvent(page, keyword);
+    if (page === 1 && data.totalHits !== 0) {
+      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+    }
+    if (data.total === 0) {
+      refs.loadMoreBtn.classList.add('invisible');
+      Notiflix.Notify.failure(
+        `Sorry, there are no images matching your search ${keyword}. Please try again.`
+      );
+    }
+
+    const events = data.hits;
+    renderEvents(events);
+    if (pageToFetch >= 2) {
+      const { height: cardHeight } = document
+        .querySelector('.gallery')
+        .firstElementChild.getBoundingClientRect();
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
+    }
+
+    new SimpleLightbox('.gallery a').refresh();
+    if (pageToFetch === Math.ceil(data.totalHits / 40)) {
+      refs.loadMoreBtn.classList.add('invisible');
+      Notiflix.Notify.info(
+        "We're sorry, but you've reached the end of search results."
+      );
+      return;
+    }
+
+    pageToFetch += 1;
+    if (Math.ceil(data.totalHits / 40) > 1) {
+      refs.loadMoreBtn.classList.remove('invisible');
+    }
+  } catch (error) {
+    Notiflix.Notify.failure(`${error.message}`);
+    console.log(error);
+  }
+}
+
+function renderEvents(events) {
+  const markup = events
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => {
+        return `
+        <a class="photo-card__item" href="${largeImageURL}">
+        <div class="photo-card">
+            <img src="${webformatURL}" alt="${tags}" loading="lazy" width='260' height='200'/>
+            <div class="info">
+                <p class="info-item">
+                <b>Likes</b>
+                ${likes}
+                </p>
+                <p class="info-item">
+                <b>Views</b>
+                ${views}
+                </p>
+                <p class="info-item">
+                <b>Comments</b>
+                ${comments}
+                </p>
+                <p class="info-item">
+                <b>Downloads</b>
+                ${downloads}
+                </p>
+            </div>
+        </div>
+        </a>
+        `;
+      }
+    )
+    .join('');
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
+}
+
+refs.form.addEventListener('submit', onFormSubmitHandler);
+
+function onFormSubmitHandler(e) {
   e.preventDefault();
-  window.scrollTo({ top: 0 });
-  page = 1;
-  query = e.currentTarget.searchQuery.value.trim();
-  gallery.innerHTML = '';
-  loadMoreBtn.classList.add('is-hidden');
-
-  if (query === '') {
-    alertNoEmptySearch();
+  const query = e.target.elements.searchQuery.value.trim();
+  keyword = query;
+  pageToFetch = 1;
+  refs.gallery.innerHTML = '';
+  // console.log(query)
+  if (!query) {
     return;
   }
-
-  fetchImages(query, page, perPage)
-    .then(({ data }) => {
-      if (data.totalHits === 0) {
-        alertNoImagesFound();
-      } else {
-        renderGallery(data.hits);
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-        alertImagesFound(data);
-
-        if (data.totalHits > perPage) {
-          loadMoreBtn.classList.remove('is-hidden');
-        }
-      }
-    })
-    .catch(error => console.log(error))
-    .finally(() => {
-      searchForm.reset();
-    });
+  getEvents(pageToFetch, query);
 }
 
-function onLoadMoreBtn() {
-  page += 1;
-  simpleLightBox.destroy();
+refs.loadMoreBtn.addEventListener('click', onLoadMoreHandler);
 
-  fetchImages(query, page, perPage)
-    .then(({ data }) => {
-      renderGallery(data.hits);
-      simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-
-      const totalPages = Math.ceil(data.totalHits / perPage);
-
-      if (page > totalPages) {
-        loadMoreBtn.classList.add('is-hidden');
-        alertEndOfSearch();
-      }
-    })
-    .catch(error => console.log(error));
-}
-
-function alertImagesFound(data) {
-  Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-}
-
-function alertNoEmptySearch() {
-  Notiflix.Notify.failure('The search string cannot be empty. Please specify your search query.');
-}
-
-function alertNoImagesFound() {
-  Notiflix.Notify.failure(
-    'Sorry, there are no images matching your search query. Please try again.',
-  );
-}
-
-function alertEndOfSearch() {
-  Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
+function onLoadMoreHandler() {
+  getEvents(pageToFetch, keyword);
 }

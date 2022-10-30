@@ -1,0 +1,103 @@
+body {
+  background-color: rgb(225, 232, 255);
+}
+
+.search-form {
+  background-color: rgb(185, 201, 253);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+
+}
+
+.search-box {
+    border-color: rgb(129, 158, 253);
+    border-radius: 15px;
+}
+
+.search-box:hover,
+.search-box:focus {
+    border-color: rgb(38, 89, 255);
+}
+
+.load-more {
+  display: flex;
+  margin: 20px auto;
+  padding: 15px;
+  border-color: rgb(129, 158, 253);
+  border-radius: 15px;
+}
+
+.search {
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  border-color: rgb(129, 158, 253);
+}
+
+.search:hover,
+.search:focus,
+.load-more:hover,
+.load-more:focus {
+border-color: rgb(38, 89, 255);
+cursor: pointer;
+}
+
+.invisible {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.gallery {
+  width: 1200px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.photo-card {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #ffffff;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(0, 0, 0, 0.14),
+    0px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.photo-card__item {
+  margin: 10px auto;
+}
+
+.photo-card:hover {
+  transform: scale(1.05);
+}
+
+.info {
+  display: flex;
+  justify-content: space-around;
+  font-size: 18px;
+  line-height: 1.19;
+  letter-spacing: 0.03em;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 12px;
+}
+
+b,
+p {
+  color: rgb(38, 89, 255);
+}
