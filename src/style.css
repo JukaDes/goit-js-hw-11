@@ -2,6 +2,15 @@ body {
   background-color: rgb(225, 232, 255);
 }
 
+a {
+  text-decoration: none;
+}
+
+b,
+p {
+  color: rgb(38, 89, 255);
+}
+
 .search-form {
   background-color: rgb(185, 201, 253);
   padding: 20px;
@@ -28,15 +37,15 @@ body {
   border-radius: 15px;
 }
 
-.search {
+.search-button {
   margin-left: 10px;
   padding: 10px;
   border-radius: 15px;
   border-color: rgb(129, 158, 253);
 }
 
-.search:hover,
-.search:focus,
+.search-button:hover,
+.search-button:focus,
 .load-more:hover,
 .load-more:focus {
   border-color: rgb(38, 89, 255);
@@ -45,10 +54,6 @@ body {
 
 .invisible {
   display: none;
-}
-
-a {
-  text-decoration: none;
 }
 
 .gallery {
@@ -94,9 +99,4 @@ a {
   text-align: center;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 13px;
-}
-
-b,
-p {
-  color: rgb(38, 89, 255);
 }

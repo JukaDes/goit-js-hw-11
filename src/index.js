@@ -6,7 +6,7 @@ const axios = require('axios').default;
 const refs = {
   form: document.querySelector('.search-form'),
   input: document.querySelector('input'),
-  searchBtn: document.querySelector('.search'),
+  searchBtn: document.querySelector('.search-button'),
   loadMoreBtn: document.querySelector('.load-more'),
   gallery: document.querySelector('.gallery'),
 };
