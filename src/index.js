@@ -122,9 +122,9 @@ function renderEvents(events) {
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 }
 
-refs.form.addEventListener('submit', onFormSubmitHandler);
+refs.form.addEventListener('submit', onFormSubmit);
 
-function onFormSubmitHandler(e) {
+function onFormSubmit(e) {
   e.preventDefault();
   const query = e.target.elements.searchQuery.value.trim();
   keyword = query;
@@ -137,8 +137,8 @@ function onFormSubmitHandler(e) {
   getEvents(pageToFetch, query);
 }
 
-refs.loadMoreBtn.addEventListener('click', onLoadMoreHandler);
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
-function onLoadMoreHandler() {
+function onLoadMore() {
   getEvents(pageToFetch, keyword);
 }
